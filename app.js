@@ -11,3 +11,8 @@ var http = require('http');
 function handleRequest(req, res) {
     res.end('hello world');
 }
+
+var server = http.createServer(handleRequest);
+server.listen(port, function () {
+    console.log('Server started.');
+});
