@@ -1,18 +1,20 @@
 const port = 1337;
 
 var http = require('http');
+var Dispatcher = require('./dispatcher');
+var dispatcher = new Dispatcher();
 
-/**
- * Handles request to http server
- * @param {Object} req request definition
- * @param {Object} res response definition
- * @return {undefined} nothing
- */
-function handleRequest(req, res) {
-    res.end('hello world');
-}
+dispatcher.onGet('/api/recipe', function (req, res) {
+    res.writeHead(200, {
+        'Content-Type': 'application/json'
+    });
+    res.write(JSON.stringify({
+        'message': 'hello world!'
+    }));
+    res.end();
+});
 
-var server = http.createServer(handleRequest);
+var server = http.createServer(dispatcher.handleRequest);
 server.listen(port, function () {
     console.log('Server started.');
 });
