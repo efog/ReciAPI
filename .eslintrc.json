@@ -14,7 +14,10 @@
         "arrow-spacing": "error",
         "block-scoped-var": "error",
         "block-spacing": "error",
-        "brace-style": "error",
+        "brace-style": [
+            "error",
+            "stroustrup"
+        ],
         "callback-return": "error",
         "camelcase": "error",
         "comma-spacing": [
@@ -38,7 +41,7 @@
         "func-names": "off",
         "func-style": "off",
         "generator-star-spacing": "error",
-        "global-require": "off",         
+        "global-require": "off",
         "guard-for-in": "error",
         "handle-callback-err": "error",
         "id-blacklist": "error",

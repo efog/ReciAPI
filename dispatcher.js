@@ -3,6 +3,7 @@ var url = require('url');
 /**
  * Defines dispatcher object
  * @returns {Object} a dispatcher object
+ * @constructor
  */
 function Dispatcher() {
 
@@ -38,8 +39,16 @@ function Dispatcher() {
         if (req.method === POST && this._posts[parsedUrl.pathname]) {
             this._posts[parsedUrl.pathname](req, res);
         }
-        if (req.method === GET && this._gets[parsedUrl.pathname]) {
+        else if (req.method === GET && this._gets[parsedUrl.pathname]) {
             this._gets[parsedUrl.pathname](req, res);
+        }
+        else {
+            res.writeHead(404,
+                {
+                    'Content-Type': 'text/plain'
+                });
+            res.write('Not found');
+            res.end();
         }
     };
 
