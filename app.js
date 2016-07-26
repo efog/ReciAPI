@@ -2,17 +2,13 @@ const port = 1337;
 
 var http = require('http');
 var Dispatcher = require('./dispatcher');
-var dispatcher = new Dispatcher();
+var RecipeHandler = require('./recipeHandler');
 
-dispatcher.onGet('/api/recipe', function (req, res) {
-    res.writeHead(200, {
-        'Content-Type': 'application/json'
-    });
-    res.write(JSON.stringify({
-        'message': 'hello world!'
-    }));
-    res.end();
-});
+var dispatcher = new Dispatcher();
+var recipeHandler = new RecipeHandler();
+
+dispatcher.onGet('/api/recipe', recipeHandler.get);
+dispatcher.onPost('/api/recipe', recipeHandler.post);
 
 var server = http.createServer(dispatcher.handleRequest);
 server.listen(port, function () {

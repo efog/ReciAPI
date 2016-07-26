@@ -1,8 +1,9 @@
 var url = require('url');
+var handlerChain = require('./handler-chain');
 
 /**
  * Defines dispatcher object
- * @returns {Object} a dispatcher object
+ *
  * @constructor
  */
 function Dispatcher() {
@@ -37,7 +38,7 @@ function Dispatcher() {
     this.handleRequest = (req, res) => {
         var parsedUrl = url.parse(req.url);
         if (req.method === POST && this._posts[parsedUrl.pathname]) {
-            this._posts[parsedUrl.pathname](req, res);
+            this.handlePost(this._posts[parsedUrl.pathname], req, res);
         }
         else if (req.method === GET && this._gets[parsedUrl.pathname]) {
             this._gets[parsedUrl.pathname](req, res);
@@ -53,21 +54,39 @@ function Dispatcher() {
     };
 
     /**
-     * Defines a handler for a POST on resource name
+     * Handles POST requests
      *
-     * @param {any} resource name of resource
-     * @param {any} callback used to handle the request
+     * @param {object} post POST handler
+     * @param {object} req request object
+     * @param {object} res response object
      * @returns {undefined}
      */
-    this.onPost = (resource, callback) => {
-        this._posts[resource] = callback;
+    this.handlePost = (post, req, res) => {
+        var parsedUrl = url.parse(req.url);
+        var handler = this._posts[parsedUrl.pathname];
+        handler.callback(req, res);
+    };
+
+    /**
+     * Defines a handler for a POST on resource name
+     *
+     * @param {string} resource name of resource
+     * @param {object} callback used to handle the request
+     * @param {array} helpers stack
+     * @returns {undefined}
+     */
+    this.onPost = (resource, callback, helpers) => {
+        this._posts[resource] = {
+            'callback': callback,
+            'helpers': helpers
+        };
     };
 
     /**
      * Defines a hander for a GET on resource name
      *
-     * @param {any} resource resource url
-     * @param {any} callback callback to handle request
+     * @param {string} resource resource url
+     * @param {object} callback callback to handle request
      * @returns {undefined}
      */
     this.onGet = (resource, callback) => {
