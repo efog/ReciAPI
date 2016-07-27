@@ -35,8 +35,8 @@ function getChainNode(idx, helpers, handler) {
  * @returns {Object} chained helpers
  */
 function chain(helpers, handler) {
-    var hl = helpers.length;
-    if (helpers.length === 0) {
+    var hl = helpers ? helpers.length : 0;
+    if (hl === 0) {
         return handler;
     }
     var execChain = getChainNode(0, helpers, handler);

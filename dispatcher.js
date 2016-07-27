@@ -36,6 +36,37 @@ function Dispatcher() {
      * @return {undefined}
      */
     this.handleRequest = (req, res) => {
+        req.hasData = this.requestHasData(req);
+        if (req.hasData) {
+            req.on('data', (chunk) => {
+                var data = chunk;
+                req.data = data;
+                this.executeCallback(req, res);
+            });
+        }
+        else {
+            this.executeCallback(req, res);
+        }
+    };
+
+    /**
+     * Updates the request object hasData flag if content-length header is greater than 0
+     *
+     * @param {object} req request object
+     * @returns {undefined}
+     */
+    this.requestHasData = (req) => {
+        req.hasData = parseInt(req.headers['content-length'], 10) > 0;
+    };
+
+    /**
+     * Executes callback and chains middlewares
+     *
+     * @param {object} req request object
+     * @param {object} res response object
+     * @returns {undefined}
+     */
+    this.executeCallback = (req, res) => {
         var parsedUrl = url.parse(req.url);
         if (req.method === POST && this._posts[parsedUrl.pathname]) {
             this.handlePost(this._posts[parsedUrl.pathname], req, res);
@@ -77,8 +108,7 @@ function Dispatcher() {
      */
     this.onPost = (resource, callback, helpers) => {
         this._posts[resource] = {
-            'callback': callback,
-            'helpers': helpers
+            'callback': handlerChain.chain(helpers, callback)
         };
     };
 

@@ -14,6 +14,17 @@ function FormBodyParser() {
      * @returns {undefined}
      */
     this.parse = (req, res, next) => {
+        req.formData = null;
+        if (req.data) {
+            var serializedData = req.data.toString();
+            console.log("Received body data: %s", serializedData);
+            var data = {};
+            serializedData.split('&').forEach(function (element) {
+                var equalSplit = element.split('=');
+                data[decodeURIComponent(equalSplit[0])] = decodeURIComponent(equalSplit[1]);
+            });
+            req.formData = data;
+        }
         next(req, res);
     };
 }
